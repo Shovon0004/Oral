@@ -94,7 +94,7 @@ export default function Footer() {
               <li className="flex items-center">
                 <Phone className="h-4 w-4 mr-2 text-red-600" />
                 <a href="tel:+911234567890" className="text-muted-foreground hover:text-red-600 transition-colors">
-                  +91 696969
+                  +91 
                 </a>
               </li>
             </ul>
