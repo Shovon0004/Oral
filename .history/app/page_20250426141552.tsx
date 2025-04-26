@@ -34,7 +34,7 @@ export default function Home() {
           <div className="flex-1">
             <div className="relative h-[300px] md:h-[400px] w-full rounded-lg overflow-hidden shadow-xl">
               <Image
-                src="/oral.jpg?height=400&width=600"
+                src="/ora?height=400&width=600"
                 alt="Oral cancer awareness"
                 fill
                 className="object-cover"
