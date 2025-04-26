@@ -1,6 +1,7 @@
 {
-  "name": "my-v0-project",
-  "version": "0.1.0",
+  "name": "Oral Cancer Screening",
+  "description": "A web application for oral cancer screening and management, built with Next.js, React, and Tailwind CSS.",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

@@ -13,7 +13,8 @@ export default function AssessmentPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
+        {/* Assessment page header - hidden when printing report */}
+        <div className="text-center mb-8 print:hidden">
           <div className="inline-block p-3 bg-red-100 dark:bg-red-900/30 rounded-full mb-4">
             <FileSpreadsheet className="h-8 w-8 text-red-600" />
           </div>
@@ -24,8 +25,8 @@ export default function AssessmentPage() {
           </p>
         </div>
 
-        <Card className="border-red-200 dark:border-red-800/30 shadow-md">
-          <CardHeader>
+        <Card className="border-red-200 dark:border-red-800/30 shadow-md print:shadow-none print:border-0">
+          <CardHeader className="print:hidden">
             <CardTitle>Risk Assessment Questionnaire</CardTitle>
             <CardDescription>Please answer all questions honestly for an accurate risk assessment</CardDescription>
           </CardHeader>

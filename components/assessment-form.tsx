@@ -12,6 +12,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle, AlertTriangle, CheckCircle2, Download, Loader2, Printer } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import { toast } from "@/components/ui/use-toast"
+import { ScoreMeter, LinearScoreMeter } from "@/components/score-meter"
 import { jsPDF } from "jspdf"
 import "jspdf-autotable"
 
@@ -310,10 +311,10 @@ export default function AssessmentForm() {
 
     if (category === "LOW") {
       return (
-        <Alert className="mt-6 border-green-500 bg-green-50 dark:bg-green-950/30">
+        <Alert className="mt-6 border-green-500 bg-green-50 dark:bg-green-950/30 print:bg-white print:border-green-500">
           <CheckCircle2 className="h-5 w-5 text-green-500" />
-          <AlertTitle className="text-green-700 dark:text-green-400 text-lg font-medium">Low Risk (0-14)</AlertTitle>
-          <AlertDescription className="text-green-700 dark:text-green-400">
+          <AlertTitle className="text-green-700 dark:text-green-400 text-lg font-medium print:text-green-700">Low Risk (0-14)</AlertTitle>
+          <AlertDescription className="text-green-700 dark:text-green-400 print:text-green-700">
             <p className="mb-2">You are at low risk for developing oral cancer. However, it's still important to:</p>
             <ul className="list-disc pl-5 space-y-1">
               <li>Maintain good oral hygiene</li>
@@ -328,12 +329,12 @@ export default function AssessmentForm() {
 
     if (category === "MODERATE") {
       return (
-        <Alert className="mt-6 border-yellow-500 bg-yellow-50 dark:bg-yellow-950/30">
+        <Alert className="mt-6 border-yellow-500 bg-yellow-50 dark:bg-yellow-950/30 print:bg-white print:border-yellow-500">
           <AlertTriangle className="h-5 w-5 text-yellow-500" />
-          <AlertTitle className="text-yellow-700 dark:text-yellow-400 text-lg font-medium">
+          <AlertTitle className="text-yellow-700 dark:text-yellow-400 text-lg font-medium print:text-yellow-700">
             Moderate Risk (15-28)
           </AlertTitle>
-          <AlertDescription className="text-yellow-700 dark:text-yellow-400">
+          <AlertDescription className="text-yellow-700 dark:text-yellow-400 print:text-yellow-700">
             <p className="mb-2">You are at moderate risk for developing oral cancer. It's recommended that you:</p>
             <ul className="list-disc pl-5 space-y-1">
               <li>Consult with a healthcare professional</li>
@@ -348,10 +349,10 @@ export default function AssessmentForm() {
     }
 
     return (
-      <Alert className="mt-6 border-red-500 bg-red-50 dark:bg-red-950/30">
+      <Alert className="mt-6 border-red-500 bg-red-50 dark:bg-red-950/30 print:bg-white print:border-red-500">
         <AlertCircle className="h-5 w-5 text-red-500" />
-        <AlertTitle className="text-red-700 dark:text-red-400 text-lg font-medium">High Risk (29-42)</AlertTitle>
-        <AlertDescription className="text-red-700 dark:text-red-400">
+        <AlertTitle className="text-red-700 dark:text-red-400 text-lg font-medium print:text-red-700">High Risk (29-42)</AlertTitle>
+        <AlertDescription className="text-red-700 dark:text-red-400 print:text-red-700">
           <p className="mb-2">You are at high risk for developing oral cancer. It's strongly recommended that you:</p>
           <ul className="list-disc pl-5 space-y-1">
             <li>Seek immediate consultation with a healthcare professional</li>
@@ -373,127 +374,278 @@ export default function AssessmentForm() {
 
     setTimeout(() => {
       try {
-        const doc = new jsPDF()
+        // Get the report ID and date from localStorage to ensure consistency with print
+        const reportId = localStorage.getItem("reportId") || Math.random().toString(36).substring(2, 10).toUpperCase();
+        if (!localStorage.getItem("reportId")) localStorage.setItem("reportId", reportId);
+        
+        const reportDate = localStorage.getItem("reportDate") || new Date().toLocaleDateString();
+        if (!localStorage.getItem("reportDate")) localStorage.setItem("reportDate", reportDate);
+        
+        const doc = new jsPDF();
+        const riskCategory = getRiskCategory().toLowerCase();
+        
+        // Add white background for the entire page
+        doc.setFillColor(255, 255, 255);
+        doc.rect(0, 0, 210, 297, "F");
 
-        // Add header with logo
-        doc.setFillColor(220, 38, 38) // red-600
-        doc.rect(0, 0, 210, 20, "F")
-        doc.setTextColor(255, 255, 255)
-        doc.setFontSize(16)
-        doc.text("Indian Oral Cancer Risk Assessment Report", 105, 12, { align: "center" })
+        // Add header with more compact layout
+        doc.setFillColor(248, 250, 252);
+        doc.rect(0, 0, 210, 25, "F");
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(16);
+        doc.text("Indian Oral Cancer Risk Assessment Report", 105, 10, { align: "center" });
+        
+        doc.setFontSize(10);
+        doc.setTextColor(100, 116, 139);
+        doc.text("Based on the Indian Oral Cancer Risk Score and Index", 105, 18, { align: "center" });
 
-        // Add user details section
-        doc.setTextColor(0, 0, 0)
-        doc.setFontSize(14)
-        doc.text("Personal Information", 14, 30)
-        doc.setDrawColor(220, 38, 38) // red-600
-        doc.line(14, 32, 196, 32)
+        // Make personal information more compact
+        doc.setFillColor(248, 250, 252);
+        doc.rect(10, 30, 190, 40, "F");
+        doc.setDrawColor(226, 232, 240);
+        doc.rect(10, 30, 190, 40, "S");
 
-        doc.setFontSize(10)
-        doc.text(`Name: ${userDetails.fullName}`, 14, 40)
-        doc.text(`Age: ${userDetails.age}`, 14, 46)
-        doc.text(`Gender: ${userDetails.gender.charAt(0).toUpperCase() + userDetails.gender.slice(1)}`, 14, 52)
-        doc.text(`Contact: ${userDetails.phone}`, 14, 58)
-        doc.text(`Email: ${userDetails.email}`, 14, 64)
-        doc.text(`Address: ${userDetails.address}, ${userDetails.city}, ${userDetails.state}`, 14, 70)
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(12);
+        doc.text("Personal Information", 15, 38);
 
-        if (userDetails.medicalHistory) {
-          doc.text(`Medical History: ${userDetails.medicalHistory}`, 14, 76)
+        // Create a more compact 2-column layout for personal information
+        doc.setFontSize(9);
+        
+        // Left column
+        doc.setTextColor(71, 85, 105);
+        doc.text("Name:", 15, 47);
+        doc.text("Age:", 15, 54);
+        doc.text("Email:", 15, 61);
+        
+        doc.setTextColor(0, 0, 0);
+        doc.text(userDetails.fullName, 40, 47);
+        doc.text(userDetails.age.toString(), 40, 54);
+        doc.text(userDetails.email || "Not provided", 40, 61);
+        
+        // Right column
+        doc.setTextColor(71, 85, 105);
+        doc.text("Gender:", 110, 47);
+        doc.text("Contact:", 110, 54);
+        
+        if (userDetails.address) {
+          doc.text("Address:", 110, 61);
+        }
+        
+        doc.setTextColor(0, 0, 0);
+        doc.text(userDetails.gender.charAt(0).toUpperCase() + userDetails.gender.slice(1), 140, 47);
+        doc.text(userDetails.phone, 140, 54);
+        
+        if (userDetails.address) {
+          let addressText = userDetails.address;
+          if (userDetails.city) addressText += ', ' + userDetails.city;
+          if (userDetails.state) addressText += ', ' + userDetails.state;
+          // Truncate address if too long
+          if (addressText.length > 40) {
+            addressText = addressText.substring(0, 37) + '...';
+          }
+          doc.text(addressText, 140, 61);
         }
 
-        // Add assessment results section
-        doc.setFontSize(14)
-        doc.text("Assessment Results", 14, 88)
-        doc.setDrawColor(220, 38, 38) // red-600
-        doc.line(14, 90, 196, 90)
-
-        doc.setFontSize(20)
-        doc.text(`Risk Score: ${totalScore}/42`, 105, 102, { align: "center" })
-
-        const riskCategory = getRiskCategory()
-        doc.setFontSize(16)
-
-        if (riskCategory === "LOW") {
-          doc.setTextColor(34, 197, 94) // green-500
-        } else if (riskCategory === "MODERATE") {
-          doc.setTextColor(234, 179, 8) // yellow-500
+        // Score section with more compact layout
+        // Determine color based on risk level
+        let arcColor;
+        if (riskCategory === "low") {
+          arcColor = [34, 197, 94]; // green-500
+        } else if (riskCategory === "moderate") {
+          arcColor = [245, 158, 11]; // amber-500
         } else {
-          doc.setTextColor(239, 68, 68) // red-500
+          arcColor = [239, 68, 68]; // red-500
         }
 
-        doc.text(`Risk Category: ${riskCategory} RISK`, 105, 112, { align: "center" })
-        doc.setTextColor(0, 0, 0)
+        // Create a more compact layout with side-by-side meters
+        const percentage = Math.min(totalScore / 42, 1);
+        
+        // Add score circle (smaller)
+        const circleX = 50;
+        const circleY = 95;
+        const radius = 20;
 
-        // Add recommendations section
-        doc.setFontSize(14)
-        doc.text("Recommendations", 14, 124)
-        doc.setDrawColor(220, 38, 38) // red-600
-        doc.line(14, 126, 196, 126)
+        // Background circle
+        doc.setFillColor(248, 250, 252);
+        doc.circle(circleX, circleY, radius, 'F');
+        doc.setDrawColor(226, 232, 240);
+        doc.circle(circleX, circleY, radius, 'S');
+        
+        // Draw the progress arc
+        doc.setDrawColor(arcColor[0], arcColor[1], arcColor[2]);
+        doc.setLineWidth(4);
+        
+        // Draw arc with small line segments
+        const startAngle = -90;
+        const endAngle = startAngle + (percentage * 360);
+        
+        for (let i = startAngle; i <= endAngle; i += 5) {
+          const rads = i * (Math.PI / 180);
+          const x = circleX + Math.cos(rads) * radius;
+          const y = circleY + Math.sin(rads) * radius;
+          
+          if (i === startAngle) {
+            doc.setDrawColor(arcColor[0], arcColor[1], arcColor[2]);
+            doc.setLineWidth(4);
+            doc.line(x, y, x, y);
+          } else {
+            const prevRads = (i - 5) * (Math.PI / 180);
+            const prevX = circleX + Math.cos(prevRads) * radius;
+            const prevY = circleY + Math.sin(prevRads) * radius;
+            doc.line(prevX, prevY, x, y);
+          }
+        }
+        
+        // Score in center
+        doc.setFontSize(16);
+        doc.setTextColor(arcColor[0], arcColor[1], arcColor[2]);
+        doc.text(totalScore.toString(), circleX, circleY + 4, { align: "center" });
+        
+        doc.setFontSize(8);
+        doc.setTextColor(100, 116, 139);
+        doc.text("out of 42", circleX, circleY + 12, { align: "center" });
 
-        doc.setFontSize(10)
+        // Add risk category
+        doc.setFontSize(14);
+        doc.setTextColor(arcColor[0], arcColor[1], arcColor[2]);
+        doc.text(getRiskCategory(), 50, 125, { align: "center" });
+        doc.setFontSize(10);
+        doc.text("RISK", 50, 135, { align: "center" });
 
-        if (riskCategory === "LOW") {
-          doc.text("You are at low risk for developing oral cancer. However, it's still important to:", 14, 134)
-          doc.text("• Maintain good oral hygiene", 14, 142)
-          doc.text("• Visit a dentist regularly for check-ups", 14, 148)
-          doc.text("• Be aware of any family history factors", 14, 154)
-          doc.text("• Avoid starting tobacco or alcohol use", 14, 160)
-        } else if (riskCategory === "MODERATE") {
-          doc.text("You are at moderate risk for developing oral cancer. It's recommended that you:", 14, 134)
-          doc.text("• Consult with a healthcare professional", 14, 142)
-          doc.text("• Consider quitting tobacco and reducing alcohol consumption", 14, 148)
-          doc.text("• Have regular oral examinations", 14, 154)
-          doc.text("• Monitor for any suspicious lesions in your oral cavity", 14, 160)
-          doc.text("• If you have persistent lesions for more than 2 weeks, seek professional evaluation", 14, 166)
+        // Add horizontal score bar (more compact)
+        const barY = 95;
+        doc.setFillColor(226, 232, 240);
+        doc.roundedRect(100, barY - 5, 90, 4, 2, 2, 'F');
+        
+        // Progress on the bar
+        doc.setFillColor(arcColor[0], arcColor[1], arcColor[2]);
+        if (percentage > 0) {
+          const progressWidth = Math.max(90 * percentage, 2);
+          doc.roundedRect(100, barY - 5, progressWidth, 4, 2, 2, 'F');
+        }
+        
+        // Risk text
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0);
+        doc.text("Risk Score: " + totalScore + "/42", 145, 105, { align: "center" });
+        
+        // Bar labels with readable colors (smaller font)
+        doc.setFontSize(7);
+        doc.setTextColor(34, 197, 94);
+        doc.text("Low", 110, barY + 8);
+        
+        doc.setTextColor(245, 158, 11);
+        doc.text("Moderate", 145, barY + 8, { align: "center" });
+        
+        doc.setTextColor(239, 68, 68);
+        doc.text("High", 180, barY + 8);
+        
+        doc.setTextColor(100, 116, 139);
+        doc.text("0", 100, barY + 8);
+        doc.text("42", 190, barY + 8);
+
+        // Add recommendations section (more compact)
+        doc.setFillColor(248, 250, 252);
+        doc.rect(10, 145, 190, 110, "F");
+        doc.setDrawColor(226, 232, 240);
+        doc.rect(10, 145, 190, 110, "S");
+        
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(12);
+        doc.text("Recommendations", 15, 155);
+        
+        doc.setFontSize(9);
+        const lineHeight = 8;
+        let startY = 165;
+        
+        if (riskCategory === "low") {
+          doc.setTextColor(34, 197, 94);
+          doc.text("Low Risk (0-14)", 15, startY);
+          doc.setTextColor(0, 0, 0);
+          doc.setFontSize(8);
+          doc.text("You are at low risk for developing oral cancer. However, it's still important to:", 15, startY + lineHeight);
+          
+          const bullets = [
+            "• Maintain good oral hygiene",
+            "• Visit a dentist regularly for check-ups",
+            "• Be aware of any family history factors",
+            "• Avoid starting tobacco or alcohol use"
+          ];
+          
+          bullets.forEach((bullet, index) => {
+            doc.text(bullet, 20, startY + (lineHeight * 2) + (index * lineHeight));
+          });
+        } else if (riskCategory === "moderate") {
+          doc.setTextColor(245, 158, 11);
+          doc.text("Moderate Risk (15-28)", 15, startY);
+          doc.setTextColor(0, 0, 0);
+          doc.setFontSize(8);
+          doc.text("You are at moderate risk for developing oral cancer. It's recommended that you:", 15, startY + lineHeight);
+          
+          const bullets = [
+            "• Consult with a healthcare professional",
+            "• Consider quitting tobacco and reducing alcohol consumption",
+            "• Have regular oral examinations",
+            "• Monitor for any suspicious lesions in your oral cavity",
+            "• If you have persistent lesions for more than 2 weeks, seek professional evaluation"
+          ];
+          
+          bullets.forEach((bullet, index) => {
+            doc.text(bullet, 20, startY + (lineHeight * 2) + (index * lineHeight));
+          });
         } else {
-          doc.text("You are at high risk for developing oral cancer. It's strongly recommended that you:", 14, 134)
-          doc.text("• Seek immediate consultation with a healthcare professional", 14, 142)
-          doc.text("• Stop all tobacco and alcohol use", 14, 148)
-          doc.text("• Undergo a thorough oral examination", 14, 154)
-          doc.text("• Consider regular screening and follow-up", 14, 160)
-          doc.text("• Make significant lifestyle changes to reduce your risk", 14, 166)
-          doc.text(
-            "• For any suspicious lesions, histopathological examination should be done in the early stage",
-            14,
-            172,
-          )
+          doc.setTextColor(239, 68, 68);
+          doc.text("High Risk (29-42)", 15, startY);
+          doc.setTextColor(0, 0, 0);
+          doc.setFontSize(8);
+          doc.text("You are at high risk for developing oral cancer. It's strongly recommended that you:", 15, startY + lineHeight);
+          
+          const bullets = [
+            "• Seek immediate consultation with a healthcare professional",
+            "• Stop all tobacco and alcohol use",
+            "• Undergo a thorough oral examination",
+            "• Consider regular screening and follow-up",
+            "• Make significant lifestyle changes to reduce your risk",
+            "• For any suspicious lesions, histopathological examination should be done in the early stage"
+          ];
+          
+          bullets.forEach((bullet, index) => {
+            doc.text(bullet, 20, startY + (lineHeight * 2) + (index * lineHeight));
+          });
         }
 
-        // Add disclaimer
-        doc.setFontSize(8)
-        doc.text(
-          "DISCLAIMER: This assessment is based on the Indian Oral Cancer Risk Score and Index. It is for educational purposes only and",
-          14,
-          260,
-        )
-        doc.text(
-          "does not replace professional medical advice. Please consult with a healthcare professional for proper diagnosis and treatment.",
-          14,
-          265,
-        )
+        // Add disclaimer and footer
+        doc.setFillColor(248, 250, 252);
+        doc.rect(10, 260, 190, 20, "F");
+        doc.setDrawColor(226, 232, 240);
+        doc.rect(10, 260, 190, 20, "S");
+        
+        doc.setTextColor(100, 116, 139);
+        doc.setFontSize(7);
+        doc.text("DISCLAIMER: This assessment is based on the Indian Oral Cancer Risk Score and Index. It is for educational purposes only", 105, 267, { align: "center" });
+        doc.text("and does not replace professional medical advice. Please consult with a healthcare professional for proper diagnosis and treatment.", 105, 273, { align: "center" });
+        doc.setFontSize(7);
+        doc.text("Report Date: " + reportDate + " | Report ID: " + reportId, 105, 279, { align: "center" });
 
-        // Add date and report ID
-        doc.text(`Report Date: ${new Date().toLocaleDateString()}`, 14, 275)
-        doc.text(`Report ID: ${Math.random().toString(36).substring(2, 10).toUpperCase()}`, 14, 280)
-
-        // Save the PDF
-        doc.save(`Oral_Cancer_Risk_Report_${userDetails.fullName.replace(/\s+/g, "_")}.pdf`)
+        // Save the PDF with a meaningful name
+        doc.save(`Oral_Cancer_Risk_Report_${userDetails.fullName.replace(/\s+/g, "_")}_${totalScore}.pdf`);
 
         toast({
           title: "Report generated",
           description: "Your assessment report has been downloaded successfully.",
-        })
+        });
       } catch (error) {
-        console.error("Error generating PDF:", error)
+        console.error("Error generating PDF:", error);
         toast({
           title: "Error generating report",
           description: "There was an error generating your report. Please try again.",
           variant: "destructive",
-        })
+        });
       } finally {
-        setIsGeneratingPDF(false)
+        setIsGeneratingPDF(false);
       }
-    }, 1500)
+    }, 1500);
   }
 
   const getProgressPercentage = () => {
@@ -505,65 +657,153 @@ export default function AssessmentForm() {
   }
 
   if (showResults) {
+    const riskCategory = getRiskCategory().toLowerCase();
+    const categoryMapping = {
+      "LOW": "low",
+      "MODERATE": "moderate",
+      "HIGH": "high"
+    }
+    
+    // Generate reportId and date for print version if not already in localStorage
+    const reportId = localStorage.getItem("reportId") || Math.random().toString(36).substring(2, 10).toUpperCase();
+    if (!localStorage.getItem("reportId")) localStorage.setItem("reportId", reportId);
+    
+    const reportDate = localStorage.getItem("reportDate") || new Date().toLocaleDateString();
+    if (!localStorage.getItem("reportDate")) localStorage.setItem("reportDate", reportDate);
+    
     return (
-      <div className="space-y-6">
-        <div className="bg-gradient-to-r from-red-50 to-red-100 dark:from-red-950/30 dark:to-red-900/20 rounded-lg p-6">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold mb-1">Your Oral Cancer Risk Assessment Results</h2>
-            <p className="text-muted-foreground">Based on the Indian Oral Cancer Risk Score and Index</p>
+      <div className="space-y-6 print:bg-white print:text-black print-container" data-report-date={reportDate} data-report-id={reportId}>
+        {/* Report header - visible only in print */}
+        <div className="hidden print:block text-center mb-6 print-section">
+          <h1 className="text-2xl font-bold">Indian Oral Cancer Risk Assessment Report</h1>
+          <p className="text-sm text-gray-600">Based on the Indian Oral Cancer Risk Score and Index</p>
+        </div>
+        
+        <div className="bg-gray-900 dark:bg-gray-900 text-white rounded-lg p-8 shadow-lg print:shadow-none print:bg-white print:p-0">
+          {/* On-screen header - hidden in print */}
+          <div className="text-center mb-6 print:hidden">
+            <h2 className="text-3xl font-bold mb-2 text-white">Indian Oral Cancer Risk Assessment Report</h2>
+            <p className="text-gray-400">Based on the Indian Oral Cancer Risk Score and Index</p>
           </div>
 
           {userDetails && (
-            <div className="mb-6 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-              <h3 className="font-medium text-lg mb-2">Personal Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                <div>
-                  <span className="font-medium">Name:</span> {userDetails.fullName}
+            <div className="mb-6 p-5 bg-gray-800 dark:bg-gray-800 rounded-lg shadow-sm print:bg-gray-50 print:border print:border-gray-200 print:p-3 print-section">
+              <h3 className="font-medium text-lg mb-4 text-white print:text-black print:mb-2">Personal Information</h3>
+              {/* Two-column layout for personal info */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm print:grid print:grid-cols-2 print:gap-2">
+                <div className="flex">
+                  <span className="font-medium text-gray-400 w-24 print:text-gray-600">Name:</span> 
+                  <span className="text-white print:text-black">{userDetails.fullName}</span>
                 </div>
-                <div>
-                  <span className="font-medium">Age:</span> {userDetails.age}
+                <div className="flex">
+                  <span className="font-medium text-gray-400 w-24 print:text-gray-600">Gender:</span> 
+                  <span className="text-white print:text-black">{userDetails.gender.charAt(0).toUpperCase() + userDetails.gender.slice(1)}</span>
                 </div>
-                <div>
-                  <span className="font-medium">Gender:</span>{" "}
-                  {userDetails.gender.charAt(0).toUpperCase() + userDetails.gender.slice(1)}
+                <div className="flex">
+                  <span className="font-medium text-gray-400 w-24 print:text-gray-600">Age:</span> 
+                  <span className="text-white print:text-black">{userDetails.age}</span>
                 </div>
-                <div>
-                  <span className="font-medium">Contact:</span> {userDetails.phone}
+                <div className="flex">
+                  <span className="font-medium text-gray-400 w-24 print:text-gray-600">Contact:</span> 
+                  <span className="text-white print:text-black">{userDetails.phone}</span>
                 </div>
+                <div className="flex">
+                  <span className="font-medium text-gray-400 w-24 print:text-gray-600">Email:</span> 
+                  <span className="text-white print:text-black">{userDetails.email || "Not provided"}</span>
+                </div>
+                {userDetails.address && (
+                  <div className="flex col-span-1 md:col-span-2 print:col-span-2">
+                    <span className="font-medium text-gray-400 w-24 print:text-gray-600">Address:</span> 
+                    <span className="text-white print:text-black">
+                      {userDetails.address}
+                      {userDetails.city ? ', ' + userDetails.city : ''}
+                      {userDetails.state ? ', ' + userDetails.state : ''}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           )}
 
-          <div className="text-center mb-6">
-            <div className="text-6xl font-bold mb-2">{totalScore}</div>
-            <div className="text-sm text-muted-foreground">Total Risk Score (out of 42)</div>
-          </div>
-
-          <div className="mb-6">
-            <div className="flex justify-between mb-2 text-sm">
-              <span>Low Risk</span>
-              <span>Moderate Risk</span>
-              <span>High Risk</span>
+          {/* Assessment Results Section - side-by-side meters */}
+          <div className="mb-6 p-5 bg-gray-800 dark:bg-gray-800 rounded-lg shadow-sm print:bg-gray-50 print:border print:border-gray-200 print:p-3 print-section">
+            <h3 className="font-medium text-lg mb-4 text-white print:text-black print:mb-2">Assessment Results</h3>
+            
+            {/* Side-by-side layout for score visualization */}
+            <div className="flex flex-col md:flex-row items-center justify-around print:flex print:flex-row">
+              {/* Left side: Circular meter */}
+              <div className="mb-6 md:mb-0 print:mb-0 print:transform print:scale-75">
+                <div className="flex flex-col items-center">
+                  <ScoreMeter 
+                    score={totalScore} 
+                    maxScore={42} 
+                    category={categoryMapping[getRiskCategory()]}
+                  />
+                  <div className="mt-3 text-xl font-bold text-white print:text-black">
+                    {getRiskCategory()} RISK
+                  </div>
+                </div>
+              </div>
+              
+              {/* Right side: Linear meter and score */}
+              <div className="w-full md:w-1/2 print:w-1/2">
+                <div className="text-center mb-4">
+                  <div className="text-xl font-bold text-white print:text-black">
+                    Risk Score: {totalScore}/42
+                  </div>
+                </div>
+                <div className="print:transform print:scale-90">
+                  <LinearScoreMeter 
+                    score={totalScore} 
+                    maxScore={42} 
+                    category={categoryMapping[getRiskCategory()]}
+                  />
+                </div>
+              </div>
             </div>
-            <Progress value={(totalScore / 42) * 100} className={getRiskColor()} />
           </div>
 
-          <div className="text-center mb-6">
-            <div className={`inline-block px-6 py-3 rounded-full font-bold text-white text-lg ${getRiskColor()}`}>
-              {getRiskCategory()} RISK
+          {/* Recommendations Section - improved appearance */}
+          <div className="mb-6 p-5 bg-gray-800 dark:bg-gray-800 rounded-lg shadow-sm print:bg-gray-50 print:border print:border-gray-200 print:p-3 print-section">
+            <h3 className="font-medium text-lg mb-4 text-white print:text-black print:mb-2">Recommendations</h3>
+            <div className={`print:bg-white print:text-black ${
+              riskCategory === "low" ? "alert-green" : 
+              riskCategory === "moderate" ? "alert-yellow" : "alert-red"
+            }`}>
+              {getRecommendations()}
             </div>
           </div>
-
-          {getRecommendations()}
+          
+          {/* Disclaimer and Report Info - visible in both screen and print */}
+          <div className="p-4 mt-6 bg-gray-800 dark:bg-gray-800 rounded-lg text-sm text-gray-400 print:text-gray-600 print:border print:border-gray-200 print:bg-gray-50 print:p-3 print-section">
+            <p>DISCLAIMER: This assessment is based on the Indian Oral Cancer Risk Score and Index. It is for educational purposes only and 
+            does not replace professional medical advice. Please consult with a healthcare professional for proper diagnosis and treatment.</p>
+            
+            <div className="flex justify-between mt-4 text-sm text-gray-400 print:text-gray-600">
+              <div>Report Date: {reportDate}</div>
+              <div>Report ID: {reportId}</div>
+            </div>
+          </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-between gap-4">
-          <Button variant="outline" onClick={resetForm} className="order-2 sm:order-1">
+        {/* Actions Buttons - hidden in print */}
+        <div className="flex flex-col sm:flex-row justify-between gap-4 print:hidden">
+          <Button variant="outline" onClick={resetForm} className="order-2 sm:order-1 bg-transparent border-gray-600 text-white hover:bg-gray-800">
             Start New Assessment
           </Button>
 
           <div className="flex gap-2 order-1 sm:order-2">
-            <Button onClick={() => window.print()} variant="secondary" className="flex-1 sm:flex-none">
+            <Button 
+              onClick={() => {
+                // Set a print flag in localStorage
+                localStorage.setItem("isPrinting", "true");
+                window.print();
+                // Remove the flag after printing
+                setTimeout(() => localStorage.removeItem("isPrinting"), 1000);
+              }} 
+              variant="secondary" 
+              className="flex-1 sm:flex-none"
+            >
               <Printer className="mr-2 h-4 w-4" />
               Print
             </Button>
