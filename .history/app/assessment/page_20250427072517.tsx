@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import AssessmentForm from "@/components/assessment-form"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { FileSpreadsheet } from "lucide-react"
-
+import RegisterPage from "../register/page"
 
 export const metadata: Metadata = {
   title: "Risk Assessment | Indian Oral Cancer Risk Assessment Tool",

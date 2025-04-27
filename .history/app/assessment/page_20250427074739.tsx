@@ -33,7 +33,23 @@ export default function AssessmentPage() {
           </CardHeader>
           <CardContent>
            
-            <AssessmentForm />
+            <Link href="/register">
+
+ 
+
+                <Button size="lg" className="bg-red-600 hover:bg-red-700 w-full sm:w-auto">
+ 
+
+                <Button size="lg" className="bg-red-600 hover:bg-red-700 w-full sm:w-auto shadow-lg transform transition-all hover:scale-105">
+ 
+
+                  Start Assessment
+ 
+                  <ChevronRight className="ml-2 h-4 w-4" />
+ 
+                </Button>
+ 
+              </Link>
           </CardContent>
         </Card>
       </div>

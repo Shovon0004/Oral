@@ -1,7 +1,12 @@
 import type { Metadata } from "next"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+
 import AssessmentForm from "@/components/assessment-form"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { FileSpreadsheet } from "lucide-react"
+import { ChevronRight, ClipboardCheck, FileText, Shield, Users } from "lucide-react"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 
 export const metadata: Metadata = {
@@ -32,9 +37,14 @@ export default function AssessmentPage() {
             <CardDescription>Please answer all questions honestly for an accurate risk assessment</CardDescription>
           </CardHeader>
           <CardContent>
-           
-            <AssessmentForm />
-          </CardContent>
+  <Link href="/register">
+    <Button size="lg" className="bg-red-600 hover:bg-red-700 w-full sm:w-auto shadow-lg transform transition-all hover:scale-105">
+      Start Assessment
+      <ChevronRight className="ml-2 h-4 w-4" />
+    </Button>
+  </Link>
+</CardContent>
+
         </Card>
       </div>
     </div>

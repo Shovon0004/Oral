@@ -788,7 +788,7 @@ export default function AssessmentForm() {
 
         {/* Actions Buttons - hidden in print */}
         <div className="flex flex-col sm:flex-row justify-between gap-4 print:hidden">
-          <Button variant="outline" onClick={resetForm} className="order-2 sm:order-1 bg-transparent border-gray-600 text-red hover:bg-gray-800">
+          <Button variant="outline" onClick={resetForm} className="order-2 sm:order-1 bg-transparent border-gray-600 text-white hover:bg-gray-800">
             Start New Assessment
           </Button>
 

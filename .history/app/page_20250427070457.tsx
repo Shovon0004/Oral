@@ -474,7 +474,7 @@ export default function Home() {
         </div>
         
         {/* Expert Quotes Section - New addition */}
-        {/* <div className="mb-20 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 rounded-3xl p-10 shadow-lg">
+        <div className="mb-20 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 rounded-3xl p-10 shadow-lg">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold mb-2">Expert Insights</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -529,7 +529,7 @@ export default function Home() {
               </CardContent>
             </Card>
           </div>
-        </div> */}
+        </div>
         
         {/* FAQ Section - New addition */}
         <div className="mb-20">

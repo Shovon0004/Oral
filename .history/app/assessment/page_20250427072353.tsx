@@ -3,7 +3,6 @@ import AssessmentForm from "@/components/assessment-form"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { FileSpreadsheet } from "lucide-react"
 
-
 export const metadata: Metadata = {
   title: "Risk Assessment | Indian Oral Cancer Risk Assessment Tool",
   description:
@@ -32,7 +31,7 @@ export default function AssessmentPage() {
             <CardDescription>Please answer all questions honestly for an accurate risk assessment</CardDescription>
           </CardHeader>
           <CardContent>
-           
+            <R
             <AssessmentForm />
           </CardContent>
         </Card>

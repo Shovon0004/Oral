@@ -33,7 +33,7 @@ export default function AssessmentPage() {
           </CardHeader>
           <CardContent>
            
-            <AssessmentForm />
+            <Regis
           </CardContent>
         </Card>
       </div>

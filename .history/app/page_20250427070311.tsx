@@ -474,7 +474,7 @@ export default function Home() {
         </div>
         
         {/* Expert Quotes Section - New addition */}
-        {/* <div className="mb-20 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 rounded-3xl p-10 shadow-lg">
+        <div className="mb-20 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 rounded-3xl p-10 shadow-lg">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold mb-2">Expert Insights</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -482,54 +482,9 @@ export default function Home() {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-8">
-            <Card className="border-0 shadow-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur">
-              <CardContent className="pt-6">
-                <div className="flex gap-4 items-start">
-                  <div className="w-14 h-14 rounded-full bg-red-100 dark:bg-red-800/30 flex items-center justify-center flex-shrink-0">
-                    <Image 
-                      src="/placeholder-user.jpg" 
-                      alt="Dr. Sharma" 
-                      width={56} 
-                      height={56} 
-                      className="rounded-full"
-                    />
-                  </div>
-                  <div>
-                    <blockquote className="text-lg italic mb-4">
-                      "Early detection of oral cancer significantly increases the chances of successful treatment. Regular screenings and awareness of risk factors are crucial for prevention."
-                    </blockquote>
-                    <div className="font-semibold">Dr. Rajesh Sharma</div>
-                    <div className="text-sm text-muted-foreground">Oral Oncologist, AIIMS Delhi</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          
             
-            <Card className="border-0 shadow-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur">
-              <CardContent className="pt-6">
-                <div className="flex gap-4 items-start">
-                  <div className="w-14 h-14 rounded-full bg-red-100 dark:bg-red-800/30 flex items-center justify-center flex-shrink-0">
-                    <Image 
-                      src="/placeholder-user.jpg" 
-                      alt="Dr. Patel" 
-                      width={56} 
-                      height={56} 
-                      className="rounded-full"
-                    />
-                  </div>
-                  <div>
-                    <blockquote className="text-lg italic mb-4">
-                      "The prevalence of oral cancer in India is directly linked to tobacco use in various forms. Risk assessment tools help identify high-risk individuals who need immediate intervention."
-                    </blockquote>
-                    <div className="font-semibold">Dr. Meena Patel</div>
-                    <div className="text-sm text-muted-foreground">Head of Preventive Oncology, Tata Memorial Hospital</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div> */}
+
         
         {/* FAQ Section - New addition */}
         <div className="mb-20">

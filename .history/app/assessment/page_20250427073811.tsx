@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import AssessmentForm from "@/components/assessment-form"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { FileSpreadsheet } from "lucide-react"
+import RegisterPage from "../register/page"
 
 
 export const metadata: Metadata = {
@@ -33,7 +34,7 @@ export default function AssessmentPage() {
           </CardHeader>
           <CardContent>
            
-            <AssessmentForm />
+            <RegisterPage/>
           </CardContent>
         </Card>
       </div>
