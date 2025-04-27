@@ -13,7 +13,7 @@ export default function Header() {
     <header className="border-b sticky top-0 bg-background z-50">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/" className="font-bold text-xl flex items-center">
-          <span className="text-red-600 mr-1">Oral</span>CancerRisk.in
+          <span className="text-red-600 mr-1">Oral</span>Cancer Risk
         </Link>
 
         {/* Mobile menu button */}

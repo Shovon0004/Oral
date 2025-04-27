@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
             <h3 className="font-bold text-lg mb-4">
-              <span className="text-red-600">Oral</span>CancerRisk.in
+              <span className="text-red-600">Oral</span> Cancer Risk
             </h3>
             <p className="text-sm text-muted-foreground mb-4">
               A scientifically validated tool to assess your risk of oral cancer based on the Indian Oral Cancer Risk
